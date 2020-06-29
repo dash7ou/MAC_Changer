@@ -1,7 +1,15 @@
+
+'''
+    Author: DashZou 
+    Site: https://dashzou.web.app/
+    GitHub: https://www.github.com/dash7ou
+'''
+
+
 # !/usr/bin/env python
-import subprocess
-import optparse
 import re
+import optparse
+import subprocess
 
 
 # get aregument from shell
