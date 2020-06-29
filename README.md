@@ -1,6 +1,6 @@
 # MAC Address Changer
 
-code right by python to change mac address.
+Script write using python to change mac address.
 
 Run script:
 
