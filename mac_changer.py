@@ -1,6 +1,7 @@
 # !/usr/bin/env python
 import subprocess
 import optparse
+import re
 
 
 # get aregument from shell
@@ -15,9 +16,9 @@ def get_arguments():
     if not options.interface:
         parser.error(
             "[-] Please specify an interface, use --help for more info.")
-    elif not options.new_mac:
+    elif not options.new_mac or not re.match(r"(?:[0-9a-fA-F]:?){12}", options.new_mac):
         parser.error(
-            "[-] Please specify a new mac, use --help for more info.")
+            "[-] Please specify a new MAC or enter right MAC, use --help for more info.")
     else:
         return options
 
@@ -34,5 +35,24 @@ def change_mac(interface, new_mac):
     subprocess.call(['ifconfig', interface, 'up'])
 
 
+def get_current_mac(interface):
+    # make shure there are MAC to change, interface like "lo" has no MAC
+    ifconfig_result = subprocess.check_output(["ifconfig", interface])
+    mac_address_search_result = re.search(
+        r"(?:[0-9a-fA-F]:?){12}", ifconfig_result)
+
+    if not mac_address_search_result:
+        print("[-] Could not read MAC address.")
+
+    print("Current MAC address => " + str(mac_address_search_result.group(0)))
+    return mac_address_search_result.group(0)
+
+
 options = get_arguments()
+current_mac = get_current_mac(options.interface)
 change_mac(options.interface, options.new_mac)
+current_mac = get_current_mac(options.interface)
+if current_mac == options.new_mac:
+    print('[+] MAC address was successfully changed to ' + current_mac)
+else:
+    print('[-] MAC address did not get changed.')
